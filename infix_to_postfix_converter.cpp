@@ -11,23 +11,23 @@
 
 infix_to_postfix_converter::infix_to_postfix_converter(std::string &input)
 {
-    
-    infix = input; //?????
+    infix = input;
     postfix = convert_to_postfix(input);
 }
 
 infix_to_postfix_converter::~infix_to_postfix_converter()
 {
+    // empty destructor
 }
 
-const std::string &get_infix()
+const std::string &infix_to_postfix_converter::get_infix() const
 {
-    return 0;
+    return infix;
 }
 
-const std::string &get_postfix()
+const std::string &infix_to_postfix_converter::get_postfix() const
 {
-    return 0;
+    return postfix;
 }
 
 int infix_to_postfix_converter::precedence(char op) const
@@ -38,20 +38,18 @@ int infix_to_postfix_converter::precedence(char op) const
         return 2;
     else if (op == '(')
         return 0;
+    else
+        return -1;
 }
 
 std::string infix_to_postfix_converter::convert_to_postfix(std::string &input)
 {
-    // initialise the stack
     LStack<char> stack;
-    // initialise the queue
     LQueue<char> queue;
 
     // parse each character in the input string
-    for(int i = 0; i < input.length(); i++)
+    for (char sym : input)
     {
-        // initialise variable to hold the current character
-        char sym = input[i];
 
         // if sym is a space character: skip it
         if (isspace(sym))
@@ -109,6 +107,7 @@ std::string infix_to_postfix_converter::convert_to_postfix(std::string &input)
                     break;
                 }
             }
+
             // push the current character to the stack
             stack.push(sym);
         }
@@ -117,17 +116,19 @@ std::string infix_to_postfix_converter::convert_to_postfix(std::string &input)
             // throw an exception
             throw std::invalid_argument("Invalid expression: invalid character");
         }
-        // if the stack is not empty pop and enqueue the remaining operators
-        while (!stack.empty())
-        {
-            queue.enqueue(stack.pop());
-        }
-        
-        // while the queue is not empty
-        while (!queue.empty())
-        {
-            // append the front of the queue to the postfix string
-            postfix += queue.dequeue();
-        }
     }
+    // if the stack is not empty pop and enqueue the remaining operators
+    while (!stack.empty())
+    {
+        queue.enqueue(stack.pop());
+    }
+
+    // while the queue is not empty
+    while (!queue.empty())
+    {
+        // append the front of the queue to the postfix string
+        postfix += queue.dequeue();
+    }
+
+    return postfix;
 }
